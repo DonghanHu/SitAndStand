@@ -15,6 +15,9 @@
 		EA0782772978EFE80091F87E /* ScreenTrackerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA0782762978EFE80091F87E /* ScreenTrackerTests.swift */; };
 		EA0782812978EFE80091F87E /* ScreenTrackerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA0782802978EFE80091F87E /* ScreenTrackerUITests.swift */; };
 		EA0782832978EFE80091F87E /* ScreenTrackerUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA0782822978EFE80091F87E /* ScreenTrackerUITestsLaunchTests.swift */; };
+		EABE71F4298075E100C4712A /* FrontMostApplicationDetection.swift in Sources */ = {isa = PBXBuildFile; fileRef = EABE71F3298075E100C4712A /* FrontMostApplicationDetection.swift */; };
+		EABE71F62981B19600C4712A /* notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = EABE71F52981B19600C4712A /* notifications.swift */; };
+		EABE71F82981BA8500C4712A /* notificationIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = EABE71F72981BA8500C4712A /* notificationIcon.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,6 +50,10 @@
 		EA07827C2978EFE80091F87E /* ScreenTrackerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ScreenTrackerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		EA0782802978EFE80091F87E /* ScreenTrackerUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenTrackerUITests.swift; sourceTree = "<group>"; };
 		EA0782822978EFE80091F87E /* ScreenTrackerUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenTrackerUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		EABE71F22980664F00C4712A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		EABE71F3298075E100C4712A /* FrontMostApplicationDetection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrontMostApplicationDetection.swift; sourceTree = "<group>"; };
+		EABE71F52981B19600C4712A /* notifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = notifications.swift; sourceTree = "<group>"; };
+		EABE71F72981BA8500C4712A /* notificationIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = notificationIcon.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -97,12 +104,16 @@
 		EA0782602978EFE50091F87E /* ScreenTracker */ = {
 			isa = PBXGroup;
 			children = (
+				EABE71F72981BA8500C4712A /* notificationIcon.png */,
+				EABE71F22980664F00C4712A /* Info.plist */,
 				EA0782612978EFE50091F87E /* AppDelegate.swift */,
 				EA0782632978EFE50091F87E /* ViewController.swift */,
 				EA0782682978EFE80091F87E /* Assets.xcassets */,
 				EA07826A2978EFE80091F87E /* Main.storyboard */,
 				EA07826D2978EFE80091F87E /* ScreenTracker.entitlements */,
 				EA0782652978EFE50091F87E /* ScreenTracker.xcdatamodeld */,
+				EABE71F3298075E100C4712A /* FrontMostApplicationDetection.swift */,
+				EABE71F52981B19600C4712A /* notifications.swift */,
 			);
 			path = ScreenTracker;
 			sourceTree = "<group>";
@@ -228,6 +239,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EABE71F82981BA8500C4712A /* notificationIcon.png in Resources */,
 				EA0782692978EFE80091F87E /* Assets.xcassets in Resources */,
 				EA07826C2978EFE80091F87E /* Main.storyboard in Resources */,
 			);
@@ -254,7 +266,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EABE71F62981B19600C4712A /* notifications.swift in Sources */,
 				EA0782672978EFE50091F87E /* ScreenTracker.xcdatamodeld in Sources */,
+				EABE71F4298075E100C4712A /* FrontMostApplicationDetection.swift in Sources */,
 				EA0782642978EFE50091F87E /* ViewController.swift in Sources */,
 				EA0782622978EFE50091F87E /* AppDelegate.swift in Sources */,
 			);
@@ -427,6 +441,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ScreenTracker/Info.plist;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INFOPLIST_KEY_NSMainStoryboardFile = Main;
 				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
@@ -452,6 +467,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ScreenTracker/Info.plist;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INFOPLIST_KEY_NSMainStoryboardFile = Main;
 				INFOPLIST_KEY_NSPrincipalClass = NSApplication;

@@ -45,11 +45,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             // button.image = NSImage(named: NSImage.quickLookTemplateName)
         }
         
+        // set up status menu
         setupMenus()
         
         // initiate front-most application name
         setInitialFrontMostApplication()
         
+        // set notification center's delegate
         UNUserNotificationCenter.current().delegate = self
         
         // request for permission to send notification
@@ -67,6 +69,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         self.un.removeAllDeliveredNotifications()
         self.un.removeAllPendingNotificationRequests()
         
+        
+        // initate log file for saving information
+        var inforLogHandler = InforLog()
+        // inforLogHandler.write("hello")
     }
     
     // set up the status menu with buttons
@@ -105,7 +111,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
     
-    // test function
+    // test notification related function
     @objc func testFunction(){
         
         print("this is notification method in testFunction")
@@ -142,6 +148,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 }
                 
                 // time interval should be at least 60 if repeated
+                // set 30 minutes
                 let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1800, repeats: true)
                 let request = UNNotificationRequest(identifier: id, content: content, trigger: trigger)
                 
@@ -295,9 +302,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
 }
 
+
 extension AppDelegate: UNUserNotificationCenterDelegate {
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         return completionHandler([.list, .sound])
     }
 }
+
+
 

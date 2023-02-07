@@ -32,7 +32,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     // user notification
     let un = UNUserNotificationCenter.current()
-
+    
+    // initate log file for saving information
+    var inforLogHandler = InforLog()
+    // inforLogHandler.write("hello")
+    
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         // Insert code here to initialize your application
         
@@ -70,9 +74,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         self.un.removeAllPendingNotificationRequests()
         
         
-        // initate log file for saving information
-        var inforLogHandler = InforLog()
-        // inforLogHandler.write("hello")
+        
     }
     
     // set up the status menu with buttons
@@ -134,6 +136,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 content.subtitle = "this is subtitle"
                 content.body = "this is body"
                 content.sound = UNNotificationSound.default
+                content.categoryIdentifier = "actions"
                 
                 let id = "screentrackerTest"
                 
@@ -147,10 +150,24 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                     print(error.localizedDescription as Any)
                 }
                 
+                
+                let action1 = UNNotificationAction(identifier: "action1", title: "Ac1", options: [])
+                let action2 = UNNotificationAction(identifier: "action2", title: "Ac2", options: [])
+                let action3 = UNNotificationAction(identifier: "action3", title: "Ac3", options: [])
+                
+                let category = UNNotificationCategory(identifier: "actions", actions: [action1, action2, action3], intentIdentifiers: [], options: [])
+                
                 // time interval should be at least 60 if repeated
                 // set 30 minutes
-                let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1800, repeats: true)
+                // let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1800, repeats: true)
+                let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 3, repeats: false)
                 let request = UNNotificationRequest(identifier: id, content: content, trigger: trigger)
+                
+                // might be helpful
+                self.un.removeAllDeliveredNotifications()
+                self.un.removeAllPendingNotificationRequests()
+                
+                self.un.setNotificationCategories([category])
                 
                 self.un.add(request) { (error) in
                     if error != nil {
@@ -164,8 +181,17 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
     
+    // get timestamps
+    func returnTimeStamp() -> String{
+        let now = Date()
+        let formatter = DateFormatter()
+        formatter.timeZone = TimeZone.current
+        formatter.dateFormat = "yyyy-MM-dd-HH:mm:ss"
+        let dateString = formatter.string(from: now)
+        return dateString
+    }
     
-    
+    // set initial front most application name as default value
     func setInitialFrontMostApplication() {
         var tempName = NSWorkspace.shared.frontmostApplication?.localizedName
         // handle 'nil' situation
@@ -182,7 +208,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         if(CurrentFrontMostAppName == nil){
             CurrentFrontMostAppName = "error for current front most applciation"
         }
-        print(CurrentFrontMostAppName!)
+        // print(CurrentFrontMostAppName!)
         
         // if it is desktop, then front most application would be "Finder"
         
@@ -190,7 +216,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         if(frontMostApplicationInformation.frontMostApplication != CurrentFrontMostAppName){
             frontMostApplicationInformation.frontMostApplication = CurrentFrontMostAppName!
             // save new front most application
+            let dataLog = returnTimeStamp() + "    " + frontMostApplicationInformation.frontMostApplication + "   "
+            inforLogHandler.write(dataLog)
+            
         }
+//        print(CurrentFrontMostAppName!)
+//        print("timestamp is: ", returnTimeStamp())
         
         
         // return CurrentFrontMostAppName ?? "Null String"
@@ -304,6 +335,25 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
 
 extension AppDelegate: UNUserNotificationCenterDelegate {
+    
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        if response.notification.request.content.categoryIdentifier == "actions" {
+            switch response.actionIdentifier{
+            case "action1":
+                actionHandler.sharedactionHandler.act1()
+                break
+            case "action2":
+                actionHandler.sharedactionHandler.act2()
+                break
+            case "action3":
+                actionHandler.sharedactionHandler.act3()
+                break
+            default:
+                break
+            }
+        }
+    }
+    
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         return completionHandler([.list, .sound])
     }

@@ -15,8 +15,10 @@ struct InforLog: TextOutputStream {
     mutating func write(_ string: String) {
         let paths = FileManager.default.urls(for: .documentDirectory, in: .allDomainsMask)
         let documentDirectoryPath = paths.first!
-        // create file and file name is: log.txt
-        let log = documentDirectoryPath.appendingPathComponent("log.txt")
+        // create file and file name is: log.csv
+        let log = documentDirectoryPath.appendingPathComponent("log.csv")
+        
+        print("this is log file path: " + log.absoluteString)
 
         do {
             let handle = try FileHandle(forWritingTo: log)

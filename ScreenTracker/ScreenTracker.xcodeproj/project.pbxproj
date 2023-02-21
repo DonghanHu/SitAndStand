@@ -17,6 +17,9 @@
 		EA0782832978EFE80091F87E /* ScreenTrackerUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA0782822978EFE80091F87E /* ScreenTrackerUITestsLaunchTests.swift */; };
 		EA3E0F6D29922E18002ED289 /* actionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA3E0F6C29922E18002ED289 /* actionHandler.swift */; };
 		EA84E147298B8586006C5459 /* InforLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA84E146298B8586006C5459 /* InforLog.swift */; };
+		EAAB716F29A4695000C91594 /* applescript.csv in Resources */ = {isa = PBXBuildFile; fileRef = EAAB716E29A4695000C91594 /* applescript.csv */; };
+		EAAB717129A46B5D00C91594 /* dateHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAAB717029A46B5D00C91594 /* dateHandler.swift */; };
+		EAAB717329A48DFB00C91594 /* metadataHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAAB717229A48DFB00C91594 /* metadataHandler.swift */; };
 		EABE71F4298075E100C4712A /* FrontMostApplicationDetection.swift in Sources */ = {isa = PBXBuildFile; fileRef = EABE71F3298075E100C4712A /* FrontMostApplicationDetection.swift */; };
 		EABE71F62981B19600C4712A /* notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = EABE71F52981B19600C4712A /* notifications.swift */; };
 		EABE71F82981BA8500C4712A /* notificationIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = EABE71F72981BA8500C4712A /* notificationIcon.png */; };
@@ -54,6 +57,9 @@
 		EA0782822978EFE80091F87E /* ScreenTrackerUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenTrackerUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		EA3E0F6C29922E18002ED289 /* actionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = actionHandler.swift; sourceTree = "<group>"; };
 		EA84E146298B8586006C5459 /* InforLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InforLog.swift; sourceTree = "<group>"; };
+		EAAB716E29A4695000C91594 /* applescript.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = applescript.csv; sourceTree = "<group>"; };
+		EAAB717029A46B5D00C91594 /* dateHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = dateHandler.swift; sourceTree = "<group>"; };
+		EAAB717229A48DFB00C91594 /* metadataHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = metadataHandler.swift; sourceTree = "<group>"; };
 		EABE71F22980664F00C4712A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		EABE71F3298075E100C4712A /* FrontMostApplicationDetection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrontMostApplicationDetection.swift; sourceTree = "<group>"; };
 		EABE71F52981B19600C4712A /* notifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = notifications.swift; sourceTree = "<group>"; };
@@ -108,6 +114,7 @@
 		EA0782602978EFE50091F87E /* ScreenTracker */ = {
 			isa = PBXGroup;
 			children = (
+				EAAB716E29A4695000C91594 /* applescript.csv */,
 				EABE71F72981BA8500C4712A /* notificationIcon.png */,
 				EABE71F22980664F00C4712A /* Info.plist */,
 				EA0782612978EFE50091F87E /* AppDelegate.swift */,
@@ -120,6 +127,8 @@
 				EABE71F52981B19600C4712A /* notifications.swift */,
 				EA84E146298B8586006C5459 /* InforLog.swift */,
 				EA3E0F6C29922E18002ED289 /* actionHandler.swift */,
+				EAAB717029A46B5D00C91594 /* dateHandler.swift */,
+				EAAB717229A48DFB00C91594 /* metadataHandler.swift */,
 			);
 			path = ScreenTracker;
 			sourceTree = "<group>";
@@ -245,6 +254,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EAAB716F29A4695000C91594 /* applescript.csv in Resources */,
 				EABE71F82981BA8500C4712A /* notificationIcon.png in Resources */,
 				EA0782692978EFE80091F87E /* Assets.xcassets in Resources */,
 				EA07826C2978EFE80091F87E /* Main.storyboard in Resources */,
@@ -272,6 +282,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EAAB717129A46B5D00C91594 /* dateHandler.swift in Sources */,
+				EAAB717329A48DFB00C91594 /* metadataHandler.swift in Sources */,
 				EABE71F62981B19600C4712A /* notifications.swift in Sources */,
 				EA3E0F6D29922E18002ED289 /* actionHandler.swift in Sources */,
 				EA84E147298B8586006C5459 /* InforLog.swift in Sources */,

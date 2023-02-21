@@ -49,11 +49,25 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             // button.image = NSImage(named: NSImage.quickLookTemplateName)
         }
         
+        // create default folder for saving logging data
+        // Documents/LoggingData
+        createLogFolder()
+        
         // set up status menu
         setupMenus()
         
         // initiate front-most application name
         setInitialFrontMostApplication()
+        
+        // get metadata for the initial frontmost application
+        let dataLog = returnTimeStamp() + "    " + frontMostApplicationInformation.frontMostApplication + "\n"
+        inforLogHandler.write(dataLog)
+        let metadataHandlerObj = metadataHandlerClass()
+        let resultArray = metadataHandlerObj.getMetadataForFrontMostApplication( appName: frontMostApplicationInformation.frontMostApplication ?? "invalid app name!")
+        print("result Array: \n")
+        print(resultArray)
+        let metadata = resultArray[0] + "    " + resultArray[1] + "\n"
+        inforLogHandler.write(metadata)
         
         // set notification center's delegate
         UNUserNotificationCenter.current().delegate = self
@@ -70,9 +84,24 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
         // https://stackoverflow.com/questions/31951142/how-to-cancel-a-localnotification-with-the-press-of-a-button-in-swift
         //
+        
+        // check codes here
+        UNUserNotificationCenter.current().getPendingNotificationRequests { (notificationRequests) in
+           var identifiers: [String] = []
+           for notification:UNNotificationRequest in notificationRequests {
+               if notification.identifier == "identifierCancel" {
+                  identifiers.append(notification.identifier)
+               }
+           }
+           UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: identifiers)
+        }
+        
+        
         self.un.removeAllDeliveredNotifications()
         self.un.removeAllPendingNotificationRequests()
-        
+        self.un.removePendingNotificationRequests(withIdentifiers: ["screentrackerTest"])
+        self.un.removeDeliveredNotifications(withIdentifiers: ["screentrackerTest"])
+        // self.un.removePendingNotificationRequests(withIdentifiers: [notificationIdentifier])
         
         
     }
@@ -116,6 +145,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     // test notification related function
     @objc func testFunction(){
         
+        // firstly, remove previous set notificaiton
+        // might be helpful
+        self.un.removeAllDeliveredNotifications()
+        self.un.removeAllPendingNotificationRequests()
+        
+        
+        // secondly, create and start new notification for today
         print("this is notification method in testFunction")
         
 //        let notification = NSUserNotification()
@@ -150,6 +186,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                     print(error.localizedDescription as Any)
                 }
                 
+                // weekdays: 1 is Sunday
+                let weekdays = [2, 3, 4, 5, 6]
+                
+                for day in weekdays {
+                    
+                }
                 
                 let action1 = UNNotificationAction(identifier: "action1", title: "Ac1", options: [])
                 let action2 = UNNotificationAction(identifier: "action2", title: "Ac2", options: [])
@@ -159,13 +201,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 
                 // time interval should be at least 60 if repeated
                 // set 30 minutes
-                // let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1800, repeats: true)
+                // let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 60, repeats: true)
                 let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 3, repeats: false)
                 let request = UNNotificationRequest(identifier: id, content: content, trigger: trigger)
-                
-                // might be helpful
-                self.un.removeAllDeliveredNotifications()
-                self.un.removeAllPendingNotificationRequests()
                 
                 self.un.setNotificationCategories([category])
                 
@@ -216,8 +254,21 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         if(frontMostApplicationInformation.frontMostApplication != CurrentFrontMostAppName){
             frontMostApplicationInformation.frontMostApplication = CurrentFrontMostAppName!
             // save new front most application
-            let dataLog = returnTimeStamp() + "    " + frontMostApplicationInformation.frontMostApplication + "   "
+            let dataLog = returnTimeStamp() + "    " + frontMostApplicationInformation.frontMostApplication + "\n"
             inforLogHandler.write(dataLog)
+            
+            // get metadata for the frontmost application
+            let metadataHandlerObj = metadataHandlerClass()
+            let resultArray = metadataHandlerObj.getMetadataForFrontMostApplication( appName: CurrentFrontMostAppName ?? "invalid app name!")
+            print("result Array: \n")
+            print(resultArray)
+            let metadata = resultArray[0] + "    " + resultArray[1] + "\n"
+            inforLogHandler.write(metadata)
+            
+        }
+        // else the front most application is not changed
+        else{
+            
             
         }
 //        print(CurrentFrontMostAppName!)
@@ -226,6 +277,25 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         // return CurrentFrontMostAppName ?? "Null String"
     }
+    
+    // function create default folder for saving logging data under document directory
+    func createLogFolder(){
+        let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)
+        let documentsDirectory = paths[0]
+        let docURL = URL(string: documentsDirectory)!
+        let dataPath = docURL.appendingPathComponent("LoggingData")
+        print("folder path is: " + dataPath.absoluteString)
+        if !FileManager.default.fileExists(atPath: dataPath.path) {
+            do {
+                try FileManager.default.createDirectory(atPath: dataPath.path, withIntermediateDirectories: true, attributes: nil)
+            } catch {
+                print(error.localizedDescription)
+            }
+        } else{
+            print("logging data folder is exist!")
+        }
+    }
+    
     func applicationWillTerminate(_ aNotification: Notification) {
         // Insert code here to tear down your application
     }

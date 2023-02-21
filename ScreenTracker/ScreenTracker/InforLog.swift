@@ -16,9 +16,14 @@ struct InforLog: TextOutputStream {
         let paths = FileManager.default.urls(for: .documentDirectory, in: .allDomainsMask)
         let documentDirectoryPath = paths.first!
         // create file and file name is: log.csv
-        let log = documentDirectoryPath.appendingPathComponent("log.csv")
+        // with date Name
+        let currentDate = dateHandlerClass().logFileWithDate()
+        let fileName = currentDate + "-Log" + ".csv"
+        // let log = documentDirectoryPath.appendingPathComponent("log.csv")
+        let folderPath = documentDirectoryPath.appendingPathComponent("LoggingData")
+        let log = folderPath.appendingPathComponent(fileName)
         
-        print("this is log file path: " + log.absoluteString)
+        // print("this is log file path: " + log.absoluteString)
 
         do {
             let handle = try FileHandle(forWritingTo: log)
@@ -35,5 +40,6 @@ struct InforLog: TextOutputStream {
         }
 
     }
+    
 
 }

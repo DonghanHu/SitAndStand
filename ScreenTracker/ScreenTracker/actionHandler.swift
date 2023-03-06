@@ -24,4 +24,16 @@ class actionHandler{
         print("this is action3")
     }
     
+    func act4(){
+        print("this is action4")
+    }
+    
+    func act5(){
+        print("this is action5")
+    }
+    
+    func defaultFunc() {
+        print("no response for notification!")
+    }
+    
 }

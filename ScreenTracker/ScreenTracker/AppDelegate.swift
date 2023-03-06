@@ -15,6 +15,8 @@ import UserNotifications
 
 struct frontMostApplicationInformation {
     static var frontMostApplication = "empty"
+    static var frontMostApplicationFirstMetadata    = "Empty"
+    static var frontMostApplciationSecondMetadata   = "Empty"
 }
 
 @main
@@ -66,7 +68,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let resultArray = metadataHandlerObj.getMetadataForFrontMostApplication( appName: frontMostApplicationInformation.frontMostApplication ?? "invalid app name!")
         print("result Array: \n")
         print(resultArray)
-        let metadata = resultArray[0] + "    " + resultArray[1] + "\n"
+        let metadata = frontMostApplicationInformation.frontMostApplicationFirstMetadata + "    " + frontMostApplicationInformation.frontMostApplciationSecondMetadata + "\n"
         inforLogHandler.write(metadata)
         
         // set notification center's delegate
@@ -89,11 +91,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         UNUserNotificationCenter.current().getPendingNotificationRequests { (notificationRequests) in
            var identifiers: [String] = []
            for notification:UNNotificationRequest in notificationRequests {
-               if notification.identifier == "identifierCancel" {
-                  identifiers.append(notification.identifier)
-               }
+               print("one of them")
+               print(notification)
+//               if notification.identifier == "identifierCancel" {
+//                  identifiers.append(notification.identifier)
+//               }
            }
-           UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: identifiers)
+           // UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: identifiers)
         }
         
         
@@ -102,6 +106,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         self.un.removePendingNotificationRequests(withIdentifiers: ["screentrackerTest"])
         self.un.removeDeliveredNotifications(withIdentifiers: ["screentrackerTest"])
         // self.un.removePendingNotificationRequests(withIdentifiers: [notificationIdentifier])
+        print("pending notification: ")
+        print(UNUserNotificationCenter.getPendingNotificationRequests(self.un))
+
         
         
     }
@@ -150,17 +157,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         self.un.removeAllDeliveredNotifications()
         self.un.removeAllPendingNotificationRequests()
         
+        print("pending notification: ")
+        print(UNUserNotificationCenter.getPendingNotificationRequests(self.un))
         
         // secondly, create and start new notification for today
         print("this is notification method in testFunction")
-        
-//        let notification = NSUserNotification()
-//        notification.title = "this is title"
-//        notification.subtitle = "this is subtitle"
-//        notification.informativeText = "this is informative text"
-//        notification.contentImage = NSImage(named: NSImage.Name("notificationIcon"))
-//
-//        NSUserNotificationCenter.default.deliver(notification)
         
         // un.removeAllDeliveredNotifications()
         
@@ -168,9 +169,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             if settings.authorizationStatus == .authorized {
                 let content = UNMutableNotificationContent()
                 
-                content.title = "this is title"
-                content.subtitle = "this is subtitle"
-                content.body = "this is body"
+                content.title = "Time to change."
+                // content.subtitle = "this is subtitle"
+                content.body = "How willing are you  to use the stand mode at this moment?"
                 content.sound = UNNotificationSound.default
                 content.categoryIdentifier = "actions"
                 
@@ -193,11 +194,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                     
                 }
                 
-                let action1 = UNNotificationAction(identifier: "action1", title: "Ac1", options: [])
-                let action2 = UNNotificationAction(identifier: "action2", title: "Ac2", options: [])
-                let action3 = UNNotificationAction(identifier: "action3", title: "Ac3", options: [])
+                let action1 = UNNotificationAction(identifier: "action1", title: "1 Negative", options: [])
+                let action2 = UNNotificationAction(identifier: "action2", title: "2", options: [])
+                let action3 = UNNotificationAction(identifier: "action3", title: "3 Neutral", options: [])
+                let action4 = UNNotificationAction(identifier: "action4", title: "4", options: [])
+                let action5 = UNNotificationAction(identifier: "action5", title: "5 Positive", options: [])
+
                 
-                let category = UNNotificationCategory(identifier: "actions", actions: [action1, action2, action3], intentIdentifiers: [], options: [])
+                let category = UNNotificationCategory(identifier: "actions", actions: [action1, action2, action3, action4, action5], intentIdentifiers: [], options: [])
                 
                 // time interval should be at least 60 if repeated
                 // set 30 minutes
@@ -238,6 +242,24 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
         frontMostApplicationInformation.frontMostApplication = tempName!
         print("initial front most application is: " + tempName!)
+        
+        
+        // initialize metadata for the front most application when ScreenTracker is lanunhed
+        let metadataHandlerObj = metadataHandlerClass()
+        let resultArray = metadataHandlerObj.getMetadataForFrontMostApplication( appName: tempName ?? "invalid app name!")
+        print("in initialized setting, result Array: \n")
+        print(resultArray)
+        //  resultArray should has two elements inside
+        if(resultArray.count != 2){
+            // erros
+            frontMostApplicationInformation.frontMostApplicationFirstMetadata = "Errors and set as empty"
+            frontMostApplicationInformation.frontMostApplciationSecondMetadata = "Errors and set as empty"
+            
+        } else{
+            frontMostApplicationInformation.frontMostApplicationFirstMetadata = resultArray[0]
+            frontMostApplicationInformation.frontMostApplciationSecondMetadata = resultArray[1]
+        }
+        
     }
     
     @objc func printFrontMostApplication() {
@@ -250,6 +272,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         // if it is desktop, then front most application would be "Finder"
         
+        // if frontmost applicatin name is different from pre-set one
+        // metadata has changed
         // reset front most application name
         if(frontMostApplicationInformation.frontMostApplication != CurrentFrontMostAppName){
             frontMostApplicationInformation.frontMostApplication = CurrentFrontMostAppName!
@@ -267,9 +291,27 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             
         }
         // else the front most application is not changed
+        // check if metadata changed
         else{
-            
-            
+            let currentName = frontMostApplicationInformation.frontMostApplication
+            let metadataHandlerObj = metadataHandlerClass()
+            let resultArray = metadataHandlerObj.getMetadataForFrontMostApplication( appName: currentName ?? "invalid app name!")
+            if(resultArray.count != 2){
+                // no need to change original values
+            }
+            if(resultArray[0] ==  frontMostApplicationInformation.frontMostApplicationFirstMetadata && resultArray[1] == frontMostApplicationInformation.frontMostApplciationSecondMetadata){
+                // no need to change original values
+                
+                // update new timestamp
+                let dataLog = returnTimeStamp() + "    " + frontMostApplicationInformation.frontMostApplication + "\n"
+                inforLogHandler.write(dataLog)
+            } else{
+                // write down new data into the log file
+                let dataLog = returnTimeStamp() + "    " + frontMostApplicationInformation.frontMostApplication + "\n"
+                inforLogHandler.write(dataLog)
+                let metadata = resultArray[0] + "    " + resultArray[1] + "\n"
+                inforLogHandler.write(metadata)
+            }
         }
 //        print(CurrentFrontMostAppName!)
 //        print("timestamp is: ", returnTimeStamp())
@@ -418,7 +460,14 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             case "action3":
                 actionHandler.sharedactionHandler.act3()
                 break
+            case "action4":
+                actionHandler.sharedactionHandler.act4()
+                break
+            case "action5":
+                actionHandler.sharedactionHandler.act5()
+                break
             default:
+                actionHandler.sharedactionHandler.defaultFunc()
                 break
             }
         }

@@ -17,6 +17,13 @@ struct frontMostApplicationInformation {
     static var frontMostApplication = "empty"
     static var frontMostApplicationFirstMetadata    = "Empty"
     static var frontMostApplciationSecondMetadata   = "Empty"
+    
+    static var emptyMedata                          = "Default Empty Metadata"
+
+}
+
+struct notificationSetting {
+    static var notificationEnabled                  = false
 }
 
 @main
@@ -29,8 +36,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     private var detectingFrontMostAppTimer = Timer()
     
+    private var repeatedNotifcationTimer = Timer()
+    
     // time interval to detect front most application
-    private var timeIntervalForDetecing = 2.0
+    private var timeIntervalForDetecing = 5.0
+    
+    private var timeIntervaleForNotification = 1800.0
     
     // user notification
     let un = UNUserNotificationCenter.current()
@@ -55,6 +66,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // Documents/LoggingData
         createLogFolder()
         
+        // create respond file
+        createRespondFile()
+        
         // set up status menu
         setupMenus()
         
@@ -62,13 +76,16 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         setInitialFrontMostApplication()
         
         // get metadata for the initial frontmost application
-        let dataLog = returnTimeStamp() + "    " + frontMostApplicationInformation.frontMostApplication + "\n"
+        // let dataLog = returnTimeStamp() + "    " + frontMostApplicationInformation.frontMostApplication + "\n"
+        let dataLog = returnTimeStamp() + ", " + commaCheck(str: frontMostApplicationInformation.frontMostApplication) + "\n"
         inforLogHandler.write(dataLog)
+        
         let metadataHandlerObj = metadataHandlerClass()
         let resultArray = metadataHandlerObj.getMetadataForFrontMostApplication( appName: frontMostApplicationInformation.frontMostApplication ?? "invalid app name!")
-        print("result Array: \n")
-        print(resultArray)
-        let metadata = frontMostApplicationInformation.frontMostApplicationFirstMetadata + "    " + frontMostApplicationInformation.frontMostApplciationSecondMetadata + "\n"
+//        print("result Array: \n")
+//        print(resultArray)
+        // let metadata = frontMostApplicationInformation.frontMostApplicationFirstMetadata + "    " + frontMostApplicationInformation.frontMostApplciationSecondMetadata + "\n"
+        let metadata = commaCheck(str: frontMostApplicationInformation.frontMostApplicationFirstMetadata) + ", " + commaCheck(str: frontMostApplicationInformation.frontMostApplciationSecondMetadata) + "\n"
         inforLogHandler.write(metadata)
         
         // set notification center's delegate
@@ -77,8 +94,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // request for permission to send notification
         un.requestAuthorization(options: [.alert, .sound]) { (authorized, error) in
             if authorized {
+                notificationSetting.notificationEnabled = true
                 print("Authorized")
             } else if !authorized {
+                notificationSetting.notificationEnabled = false
                 print("Not authorized")
             } else {
                 print(error?.localizedDescription as Any)
@@ -93,23 +112,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
            for notification:UNNotificationRequest in notificationRequests {
                print("one of them")
                print(notification)
+               print(notification.identifier)
 //               if notification.identifier == "identifierCancel" {
 //                  identifiers.append(notification.identifier)
 //               }
            }
+            
            // UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: identifiers)
         }
-        
-        
-        self.un.removeAllDeliveredNotifications()
-        self.un.removeAllPendingNotificationRequests()
-        self.un.removePendingNotificationRequests(withIdentifiers: ["screentrackerTest"])
-        self.un.removeDeliveredNotifications(withIdentifiers: ["screentrackerTest"])
-        // self.un.removePendingNotificationRequests(withIdentifiers: [notificationIdentifier])
-        print("pending notification: ")
-        print(UNUserNotificationCenter.getPendingNotificationRequests(self.un))
-
-        
         
     }
     
@@ -117,14 +127,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func setupMenus() {
         // 1
         let menu = NSMenu()
-
+        
         // 2
-        firstButton = NSMenuItem(title: "Start", action: #selector(recordingFunction), keyEquivalent: "1")
+        firstButton = NSMenuItem(title: "Start", action: #selector(trackerAction), keyEquivalent: "1")
         menu.addItem(firstButton)
         
-        // test button for notifiaction
-        let secondButton = NSMenuItem(title: "Noti", action: #selector(testFunction), keyEquivalent: "2")
-        menu.addItem(secondButton)
+         
+//        let secondButton = NSMenuItem(title: "Noti", action: #selector(alertWindow), keyEquivalent: "2")
+//        menu.addItem(secondButton)
 
         menu.addItem(NSMenuItem.separator())
 
@@ -132,6 +142,95 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         // 3
         statusItem.menu = menu
+    }
+    
+    // merge button 1 and button 2
+    @objc func trackerAction() {
+        
+        // check if notification is enabled or not
+        if notificationSetting.notificationEnabled == false {
+            alertWindow()
+        } else {
+            // start recording
+            if (firstButton.title == "Start"){
+                // change button title
+                firstButton.title = "Stop"
+                // start to monitor front-most application
+                self.detectingFrontMostAppTimer = Timer.scheduledTimer(timeInterval: timeIntervalForDetecing, target: self, selector: #selector(printFrontMostApplication), userInfo: nil, repeats: true)
+                
+                // set notification for every 30 minutes
+                self.repeatedNotifcationTimer = Timer.scheduledTimer(timeInterval: timeIntervaleForNotification, target: self, selector: #selector(notificationFunction), userInfo: nil, repeats: true)
+                
+            } else{
+                firstButton.title = "Start"
+                // stop two timers
+                detectingFrontMostAppTimer.invalidate()
+                repeatedNotifcationTimer.invalidate()
+                
+            }
+        }
+
+        
+    }
+    
+    // set periodically notification function
+    @objc func notificationFunction() {
+        
+        self.un.removeAllDeliveredNotifications()
+        self.un.removeAllPendingNotificationRequests()
+        
+        un.getNotificationSettings { (settings) in
+            if settings.authorizationStatus == .authorized {
+                let content = UNMutableNotificationContent()
+                
+                content.title = "Time to change."
+                content.body = "How willing are you  to use the stand mode at this moment?                               ."
+                content.sound = UNNotificationSound.default
+                content.categoryIdentifier = "actions"
+                
+                let id = "screentrackerTest"
+                
+                let filePath = Bundle.main.path(forResource: "notificationIcon", ofType: ".png")
+                let fileUrl = URL(fileURLWithPath: filePath!)
+                do {
+                    let attachment = try UNNotificationAttachment.init(identifier: "AnotherTest", url: fileUrl, options: .none)
+                    content.attachments = [attachment]
+                    
+                } catch let error {
+                    print(error.localizedDescription as Any)
+                }
+                
+                // add actions for buttons
+                let action1 = UNNotificationAction(identifier: "action1", title: "Definitely Not", options: [])
+                let action2 = UNNotificationAction(identifier: "action2", title: "Probably Not", options: [])
+                let action3 = UNNotificationAction(identifier: "action3", title: "Possibly", options: [])
+                let action4 = UNNotificationAction(identifier: "action4", title: "Probably", options: [])
+                let action5 = UNNotificationAction(identifier: "action5", title: "Very Probably", options: [])
+                let action6 = UNNotificationAction(identifier: "action6", title: "Definitely", options: [])
+
+                
+                let category = UNNotificationCategory(identifier: "actions", actions: [action1, action2, action3, action4, action5, action6], intentIdentifiers: [], options: [])
+                
+                // time interval should be at least 60 if repeated
+                // set 30 minutes
+                // let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1800, repeats: true)
+                // let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 60, repeats: true)
+                let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5, repeats: false)
+                let request = UNNotificationRequest(identifier: id, content: content, trigger: trigger)
+                
+                self.un.setNotificationCategories([category])
+                
+                self.un.add(request) { (error) in
+                    if error != nil {
+                        print(error?.localizedDescription as Any)
+                    }
+                }
+                // end of self.un.add()
+            }
+            // end of if in settnigs
+        }
+        // end of un.getNotificationSettings
+
     }
     
     // firstButton action method
@@ -147,6 +246,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             firstButton.title = "Start"
             detectingFrontMostAppTimer.invalidate()
         }
+    }
+    
+    @objc func alertWindow(){
+        let x = errorReadingResults(question: "Notificaiton is not enabled.", text: "Please allow to send notification in System Preferences and restart this app. Thank you!")
     }
     
     // test notification related function
@@ -187,21 +290,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                     print(error.localizedDescription as Any)
                 }
                 
-                // weekdays: 1 is Sunday
-                let weekdays = [2, 3, 4, 5, 6]
-                
-                for day in weekdays {
-                    
-                }
-                
-                let action1 = UNNotificationAction(identifier: "action1", title: "1 Negative", options: [])
-                let action2 = UNNotificationAction(identifier: "action2", title: "2", options: [])
-                let action3 = UNNotificationAction(identifier: "action3", title: "3 Neutral", options: [])
-                let action4 = UNNotificationAction(identifier: "action4", title: "4", options: [])
-                let action5 = UNNotificationAction(identifier: "action5", title: "5 Positive", options: [])
+                let action1 = UNNotificationAction(identifier: "action1", title: "Definitely Not", options: [])
+                let action2 = UNNotificationAction(identifier: "action2", title: "Probably Not", options: [])
+                let action3 = UNNotificationAction(identifier: "action3", title: "Possibly", options: [])
+                let action4 = UNNotificationAction(identifier: "action4", title: "Probably", options: [])
+                let action5 = UNNotificationAction(identifier: "action5", title: "Very Probably", options: [])
+                let action6 = UNNotificationAction(identifier: "action6", title: "Definitely", options: [])
 
                 
-                let category = UNNotificationCategory(identifier: "actions", actions: [action1, action2, action3, action4, action5], intentIdentifiers: [], options: [])
+                let category = UNNotificationCategory(identifier: "actions", actions: [action1, action2, action3, action4, action5, action6], intentIdentifiers: [], options: [])
                 
                 // time interval should be at least 60 if repeated
                 // set 30 minutes
@@ -216,8 +313,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                         print(error?.localizedDescription as Any)
                     }
                 }
-                
-                
             }
             
         }
@@ -241,19 +336,19 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             tempName = "empty"
         }
         frontMostApplicationInformation.frontMostApplication = tempName!
-        print("initial front most application is: " + tempName!)
+        // print("initial front most application is: " + tempName!)
         
         
         // initialize metadata for the front most application when ScreenTracker is lanunhed
         let metadataHandlerObj = metadataHandlerClass()
         let resultArray = metadataHandlerObj.getMetadataForFrontMostApplication( appName: tempName ?? "invalid app name!")
-        print("in initialized setting, result Array: \n")
-        print(resultArray)
+//        print("in initialized setting, result Array: \n")
+//        print(resultArray)
         //  resultArray should has two elements inside
         if(resultArray.count != 2){
             // erros
-            frontMostApplicationInformation.frontMostApplicationFirstMetadata = "Errors and set as empty"
-            frontMostApplicationInformation.frontMostApplciationSecondMetadata = "Errors and set as empty"
+            frontMostApplicationInformation.frontMostApplicationFirstMetadata = "Default Empty Metadata"
+            frontMostApplicationInformation.frontMostApplciationSecondMetadata = "Default Empty Metadata"
             
         } else{
             frontMostApplicationInformation.frontMostApplicationFirstMetadata = resultArray[0]
@@ -278,7 +373,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         if(frontMostApplicationInformation.frontMostApplication != CurrentFrontMostAppName){
             frontMostApplicationInformation.frontMostApplication = CurrentFrontMostAppName!
             // save new front most application
-            let dataLog = returnTimeStamp() + "    " + frontMostApplicationInformation.frontMostApplication + "\n"
+            // let dataLog = returnTimeStamp() + "    " + frontMostApplicationInformation.frontMostApplication + "\n"
+            // inforLogHandler.write(dataLog)
+            // separate by comma
+            let dataLog = returnTimeStamp() + ", " + commaCheck(str: frontMostApplicationInformation.frontMostApplication) + "\n"
             inforLogHandler.write(dataLog)
             
             // get metadata for the frontmost application
@@ -286,38 +384,72 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             let resultArray = metadataHandlerObj.getMetadataForFrontMostApplication( appName: CurrentFrontMostAppName ?? "invalid app name!")
             print("result Array: \n")
             print(resultArray)
-            let metadata = resultArray[0] + "    " + resultArray[1] + "\n"
-            inforLogHandler.write(metadata)
+            if (resultArray.count == 2){
+                // let metadata = resultArray[0] + "    " + resultArray[1] + "\n"
+                let metadata = commaCheck(str: resultArray[0]) + ", " + commaCheck(str: resultArray[1]) + "\n"
+                inforLogHandler.write(metadata)
+            } else {
+                // let metadata = frontMostApplicationInformation.frontMostApplicationFirstMetadata + "    " + frontMostApplicationInformation.frontMostApplciationSecondMetadata
+                let metadata = frontMostApplicationInformation.emptyMedata + ", " + frontMostApplicationInformation.emptyMedata + "\n"
+                inforLogHandler.write(metadata)
+            }
+            
             
         }
         // else the front most application is not changed
         // check if metadata changed
+        // do noting, save the current metadata again
         else{
-            let currentName = frontMostApplicationInformation.frontMostApplication
+            // timestamp + app name
+            let dataLog = returnTimeStamp() + ", " + commaCheck(str: frontMostApplicationInformation.frontMostApplication) + "\n"
+            inforLogHandler.write(dataLog)
+            // get metadata for the frontmost application
             let metadataHandlerObj = metadataHandlerClass()
-            let resultArray = metadataHandlerObj.getMetadataForFrontMostApplication( appName: currentName ?? "invalid app name!")
-            if(resultArray.count != 2){
-                // no need to change original values
-            }
-            if(resultArray[0] ==  frontMostApplicationInformation.frontMostApplicationFirstMetadata && resultArray[1] == frontMostApplicationInformation.frontMostApplciationSecondMetadata){
-                // no need to change original values
-                
-                // update new timestamp
-                let dataLog = returnTimeStamp() + "    " + frontMostApplicationInformation.frontMostApplication + "\n"
-                inforLogHandler.write(dataLog)
-            } else{
-                // write down new data into the log file
-                let dataLog = returnTimeStamp() + "    " + frontMostApplicationInformation.frontMostApplication + "\n"
-                inforLogHandler.write(dataLog)
-                let metadata = resultArray[0] + "    " + resultArray[1] + "\n"
+            let resultArray = metadataHandlerObj.getMetadataForFrontMostApplication( appName: CurrentFrontMostAppName ?? "invalid app name!")
+            if (resultArray.count == 2){
+                let metadata = commaCheck(str: resultArray[0]) + ", " + commaCheck(str: resultArray[1]) + "\n"
+                inforLogHandler.write(metadata)
+            } else {
+                // result array has wrong length, write default empty values
+                let metadata = frontMostApplicationInformation.emptyMedata + ", " + frontMostApplicationInformation.emptyMedata + "\n"
                 inforLogHandler.write(metadata)
             }
+            
+            
+            
+//            let currentName = frontMostApplicationInformation.frontMostApplication
+//            let metadataHandlerObj = metadataHandlerClass()
+//            let resultArray = metadataHandlerObj.getMetadataForFrontMostApplication( appName: currentName ?? "invalid app name!")
+//            print("current result array length is: ")
+//            print(resultArray.count)
+//            if( resultArray.count == 2 && resultArray[0] ==  frontMostApplicationInformation.frontMostApplicationFirstMetadata && resultArray[1] == frontMostApplicationInformation.frontMostApplciationSecondMetadata){
+//                // no need to change original values
+//                // update new timestamp
+//                let dataLog = returnTimeStamp() + ", " + commaCheck(str: frontMostApplicationInformation.frontMostApplication) + "\n"
+//                inforLogHandler.write(dataLog)
+//
+//            } else if (resultArray.count == 2){
+//                // write down new data into the log file
+//                let dataLog = returnTimeStamp() + ", " + commaCheck(str: frontMostApplicationInformation.frontMostApplication) + "\n"
+//                inforLogHandler.write(dataLog)
+//                let metadata = commaCheck(str: resultArray[0]) + ", " + commaCheck(str: resultArray[1]) + "\n"
+//                inforLogHandler.write(metadata)
+//            } else{
+//                // do nothing
+//            }
+            
         }
-//        print(CurrentFrontMostAppName!)
-//        print("timestamp is: ", returnTimeStamp())
+        // end of else block
         
         
         // return CurrentFrontMostAppName ?? "Null String"
+    }
+    
+    // function to check whether a string contains ","
+    func commaCheck(str: String) -> String{
+        let tartgetStr = "COMMA"
+        let newString = str.replacingOccurrences(of: ",", with: "COMA", options: .literal, range: nil)
+        return newString
     }
     
     // function create default folder for saving logging data under document directory
@@ -336,6 +468,42 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         } else{
             print("logging data folder is exist!")
         }
+    }
+    
+    // create file to save responses only
+    func createRespondFile(){
+        let paths = FileManager.default.urls(for: .documentDirectory, in: .allDomainsMask)
+        let documentDirectoryPath = paths.first!
+        let currentDate = dateHandlerClass().logFileWithDate()
+        // .csv file
+        let fileName = currentDate + "-LogRe" + ".csv"
+        let folderPath = documentDirectoryPath.appendingPathComponent("LoggingData")
+        let log = folderPath.appendingPathComponent(fileName)
+        let logString = log.absoluteString
+        print(logString)
+        let string = ""
+        do {
+            let handle = try FileHandle(forWritingTo: log)
+            handle.seekToEndOfFile()
+            handle.write(string.data(using: .utf8)!)
+            handle.closeFile()
+        } catch {
+            print(error.localizedDescription)
+            do {
+                try string.data(using: .utf8)?.write(to: log)
+            } catch {
+                print(error.localizedDescription)
+            }
+        }
+    }
+    
+    // function for the alert window
+    func errorReadingResults(question: String, text: String) -> Bool {
+        let alert = NSAlert()
+        alert.messageText = question
+        alert.informativeText = text
+        alert.addButton(withTitle: "OK")
+        return alert.runModal() == NSApplication.ModalResponse.alertFirstButtonReturn
     }
     
     func applicationWillTerminate(_ aNotification: Notification) {
@@ -466,6 +634,8 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             case "action5":
                 actionHandler.sharedactionHandler.act5()
                 break
+            case "action6":
+                actionHandler.sharedactionHandler.act6()
             default:
                 actionHandler.sharedactionHandler.defaultFunc()
                 break

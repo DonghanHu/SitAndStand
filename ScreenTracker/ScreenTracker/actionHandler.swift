@@ -12,45 +12,46 @@ class actionHandler{
     static let sharedactionHandler = actionHandler()
     
     private init(){
+        // init method()
     }
     
     func act1(){
         var inforLogHandler = InforLog()
-        let timeStamp = returnTimeStamp() + "   " + "1" + "\n"
+        let timeStamp = returnTimeStamp() + "   " + "6" + "\n"
         inforLogHandler.writeResponse(timeStamp)
         print("this is action1")
         
     }
     func act2(){
         var inforLogHandler = InforLog()
-        let timeStamp = returnTimeStamp() + "   " + "2" + "\n"
+        let timeStamp = returnTimeStamp() + "   " + "5" + "\n"
         inforLogHandler.writeResponse(timeStamp)
         print("this is action2")
     }
     func act3(){
         var inforLogHandler = InforLog()
-        let timeStamp = returnTimeStamp() + "   " + "3" + "\n"
+        let timeStamp = returnTimeStamp() + "   " + "4" + "\n"
         inforLogHandler.writeResponse(timeStamp)
         print("this is action3")
     }
     
     func act4(){
         var inforLogHandler = InforLog()
-        let timeStamp = returnTimeStamp() + "   " + "4" + "\n"
+        let timeStamp = returnTimeStamp() + "   " + "3" + "\n"
         inforLogHandler.writeResponse(timeStamp)
         print("this is action4")
     }
     
     func act5(){
         var inforLogHandler = InforLog()
-        let timeStamp = returnTimeStamp() + "   " + "5" + "\n"
+        let timeStamp = returnTimeStamp() + "   " + "2" + "\n"
         inforLogHandler.writeResponse(timeStamp)
         print("this is action5")
     }
     
     func act6(){
         var inforLogHandler = InforLog()
-        let timeStamp = returnTimeStamp() + "   " + "6" + "\n"
+        let timeStamp = returnTimeStamp() + "   " + "1" + "\n"
         inforLogHandler.writeResponse(timeStamp)
         print("this is action6")
     }

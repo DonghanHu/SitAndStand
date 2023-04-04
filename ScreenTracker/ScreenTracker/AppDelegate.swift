@@ -43,6 +43,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     private var timeIntervaleForNotification = 1800.0
     
+    private var encryptionShiftindex = 3
+    private var decryptionShiftindex = 23
+    
     // user notification
     let un = UNUserNotificationCenter.current()
     
@@ -52,6 +55,19 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         // Insert code here to initialize your application
+        
+        let Caesarhandler = Caesar()
+        
+//        let string = "attAck on Titan / , . % 123 play"
+//        print(string)
+//        let en1 = Caesarhandler.encrypt(message: string, shift: 3)
+//        print(en1)
+//        let de1 = Caesarhandler.encrypt(message: en1, shift: 23)
+//        print(de1)
+//        print(Int(UnicodeScalar("A").value))
+//        print(Int(UnicodeScalar("Z").value))
+//        print(Int(UnicodeScalar("a").value))
+//        print(Int(UnicodeScalar("z").value))
         
         // 2
         // statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
@@ -77,7 +93,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         // get metadata for the initial frontmost application
         // let dataLog = returnTimeStamp() + "    " + frontMostApplicationInformation.frontMostApplication + "\n"
-        let dataLog = returnTimeStamp() + ", " + commaCheck(str: frontMostApplicationInformation.frontMostApplication) + "\n"
+        var dataLog = returnTimeStamp() + ", " + commaCheck(str: frontMostApplicationInformation.frontMostApplication) + "\n"
+        dataLog = Caesarhandler.encrypt(message: dataLog, shift: encryptionShiftindex)
         inforLogHandler.write(dataLog)
         
         let metadataHandlerObj = metadataHandlerClass()
@@ -85,7 +102,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 //        print("result Array: \n")
 //        print(resultArray)
         // let metadata = frontMostApplicationInformation.frontMostApplicationFirstMetadata + "    " + frontMostApplicationInformation.frontMostApplciationSecondMetadata + "\n"
-        let metadata = commaCheck(str: frontMostApplicationInformation.frontMostApplicationFirstMetadata) + ", " + commaCheck(str: frontMostApplicationInformation.frontMostApplciationSecondMetadata) + "\n"
+        var metadata = commaCheck(str: frontMostApplicationInformation.frontMostApplicationFirstMetadata) + ", " + commaCheck(str: frontMostApplicationInformation.frontMostApplciationSecondMetadata) + "\n"
+        metadata = Caesarhandler.encrypt(message: metadata, shift: encryptionShiftindex)
         inforLogHandler.write(metadata)
         
         // set notification center's delegate
@@ -201,12 +219,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 }
                 
                 // add actions for buttons
-                let action1 = UNNotificationAction(identifier: "action1", title: "Definitely Not", options: [])
-                let action2 = UNNotificationAction(identifier: "action2", title: "Probably Not", options: [])
-                let action3 = UNNotificationAction(identifier: "action3", title: "Possibly", options: [])
-                let action4 = UNNotificationAction(identifier: "action4", title: "Probably", options: [])
-                let action5 = UNNotificationAction(identifier: "action5", title: "Very Probably", options: [])
-                let action6 = UNNotificationAction(identifier: "action6", title: "Definitely", options: [])
+                let action1 = UNNotificationAction(identifier: "action1", title: "Definitely (6)", options: [])
+                let action2 = UNNotificationAction(identifier: "action2", title: "Very Probably (5)", options: [])
+                let action3 = UNNotificationAction(identifier: "action3", title: "Probably (4)", options: [])
+                let action4 = UNNotificationAction(identifier: "action4", title: "Possibly (3)", options: [])
+                let action5 = UNNotificationAction(identifier: "action5", title: "Probably Not (2)", options: [])
+                let action6 = UNNotificationAction(identifier: "action6", title: "Definitely Not (1)", options: [])
 
                 
                 let category = UNNotificationCategory(identifier: "actions", actions: [action1, action2, action3, action4, action5, action6], intentIdentifiers: [], options: [])
@@ -358,6 +376,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     @objc func printFrontMostApplication() {
+        
+        let Caesarhandler = Caesar()
+        
         var CurrentFrontMostAppName = NSWorkspace.shared.frontmostApplication?.localizedName?.description
         // handle 'nil' siutation
         if(CurrentFrontMostAppName == nil){
@@ -376,7 +397,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             // let dataLog = returnTimeStamp() + "    " + frontMostApplicationInformation.frontMostApplication + "\n"
             // inforLogHandler.write(dataLog)
             // separate by comma
-            let dataLog = returnTimeStamp() + ", " + commaCheck(str: frontMostApplicationInformation.frontMostApplication) + "\n"
+            var dataLog = returnTimeStamp() + ", " + commaCheck(str: frontMostApplicationInformation.frontMostApplication) + "\n"
+            dataLog = Caesarhandler.encrypt(message: dataLog, shift: encryptionShiftindex)
             inforLogHandler.write(dataLog)
             
             // get metadata for the frontmost application
@@ -386,11 +408,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             print(resultArray)
             if (resultArray.count == 2){
                 // let metadata = resultArray[0] + "    " + resultArray[1] + "\n"
-                let metadata = commaCheck(str: resultArray[0]) + ", " + commaCheck(str: resultArray[1]) + "\n"
+                var metadata = commaCheck(str: resultArray[0]) + ", " + commaCheck(str: resultArray[1]) + "\n"
+                metadata = Caesarhandler.encrypt(message: metadata, shift: encryptionShiftindex)
                 inforLogHandler.write(metadata)
             } else {
                 // let metadata = frontMostApplicationInformation.frontMostApplicationFirstMetadata + "    " + frontMostApplicationInformation.frontMostApplciationSecondMetadata
-                let metadata = frontMostApplicationInformation.emptyMedata + ", " + frontMostApplicationInformation.emptyMedata + "\n"
+                var metadata = frontMostApplicationInformation.emptyMedata + ", " + frontMostApplicationInformation.emptyMedata + "\n"
+                metadata = Caesarhandler.encrypt(message: metadata, shift: encryptionShiftindex)
                 inforLogHandler.write(metadata)
             }
             
@@ -401,17 +425,20 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // do noting, save the current metadata again
         else{
             // timestamp + app name
-            let dataLog = returnTimeStamp() + ", " + commaCheck(str: frontMostApplicationInformation.frontMostApplication) + "\n"
+            var dataLog = returnTimeStamp() + ", " + commaCheck(str: frontMostApplicationInformation.frontMostApplication) + "\n"
+            dataLog = Caesarhandler.encrypt(message: dataLog, shift: encryptionShiftindex)
             inforLogHandler.write(dataLog)
             // get metadata for the frontmost application
             let metadataHandlerObj = metadataHandlerClass()
             let resultArray = metadataHandlerObj.getMetadataForFrontMostApplication( appName: CurrentFrontMostAppName ?? "invalid app name!")
             if (resultArray.count == 2){
-                let metadata = commaCheck(str: resultArray[0]) + ", " + commaCheck(str: resultArray[1]) + "\n"
+                var metadata = commaCheck(str: resultArray[0]) + ", " + commaCheck(str: resultArray[1]) + "\n"
+                metadata = Caesarhandler.encrypt(message: metadata, shift: encryptionShiftindex)
                 inforLogHandler.write(metadata)
             } else {
                 // result array has wrong length, write default empty values
-                let metadata = frontMostApplicationInformation.emptyMedata + ", " + frontMostApplicationInformation.emptyMedata + "\n"
+                var metadata = frontMostApplicationInformation.emptyMedata + ", " + frontMostApplicationInformation.emptyMedata + "\n"
+                metadata = Caesarhandler.encrypt(message: metadata, shift: encryptionShiftindex)
                 inforLogHandler.write(metadata)
             }
             
@@ -496,6 +523,31 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             }
         }
     }
+    
+    // function for caesar encryption
+    func caesar(value: String, shift: Int) -> String {
+        // Empty character array.
+        var result = [Character]()
+        // Loop over utf8 values.
+        for u in value.utf8 {
+            // Apply shift to UInt8.
+            let s = Int(u) + shift
+            // See if value exceeds Z.
+            // ... The Z is 26 past "A" which is 97.
+            // ... If greater than "Z," shift backwards 26.
+            // ... If less than "A," shift forward 26.
+            if s > 97 + 25 {
+                result.append(Character(UnicodeScalar(s - 26)!))
+            } else if s < 97 {
+                result.append(Character(UnicodeScalar(s + 26)!))
+            } else {
+                result.append(Character(UnicodeScalar(s)!))
+            }
+        }
+        // Return String from array.
+        return String(result)
+    }
+    
     
     // function for the alert window
     func errorReadingResults(question: String, text: String) -> Bool {

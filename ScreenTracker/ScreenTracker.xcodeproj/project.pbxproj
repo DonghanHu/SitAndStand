@@ -23,6 +23,7 @@
 		EABE71F4298075E100C4712A /* FrontMostApplicationDetection.swift in Sources */ = {isa = PBXBuildFile; fileRef = EABE71F3298075E100C4712A /* FrontMostApplicationDetection.swift */; };
 		EABE71F62981B19600C4712A /* notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = EABE71F52981B19600C4712A /* notifications.swift */; };
 		EABE71F82981BA8500C4712A /* notificationIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = EABE71F72981BA8500C4712A /* notificationIcon.png */; };
+		EAF4C6C829DC921A0091AF4D /* Caesar.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAF4C6C729DC921A0091AF4D /* Caesar.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -64,6 +65,7 @@
 		EABE71F3298075E100C4712A /* FrontMostApplicationDetection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrontMostApplicationDetection.swift; sourceTree = "<group>"; };
 		EABE71F52981B19600C4712A /* notifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = notifications.swift; sourceTree = "<group>"; };
 		EABE71F72981BA8500C4712A /* notificationIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = notificationIcon.png; sourceTree = "<group>"; };
+		EAF4C6C729DC921A0091AF4D /* Caesar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Caesar.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -129,6 +131,7 @@
 				EA3E0F6C29922E18002ED289 /* actionHandler.swift */,
 				EAAB717029A46B5D00C91594 /* dateHandler.swift */,
 				EAAB717229A48DFB00C91594 /* metadataHandler.swift */,
+				EAF4C6C729DC921A0091AF4D /* Caesar.swift */,
 			);
 			path = ScreenTracker;
 			sourceTree = "<group>";
@@ -284,6 +287,7 @@
 			files = (
 				EAAB717129A46B5D00C91594 /* dateHandler.swift in Sources */,
 				EAAB717329A48DFB00C91594 /* metadataHandler.swift in Sources */,
+				EAF4C6C829DC921A0091AF4D /* Caesar.swift in Sources */,
 				EABE71F62981B19600C4712A /* notifications.swift in Sources */,
 				EA3E0F6D29922E18002ED289 /* actionHandler.swift in Sources */,
 				EA84E147298B8586006C5459 /* InforLog.swift in Sources */,

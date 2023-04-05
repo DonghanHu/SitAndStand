@@ -23,6 +23,7 @@
 		EABE71F4298075E100C4712A /* FrontMostApplicationDetection.swift in Sources */ = {isa = PBXBuildFile; fileRef = EABE71F3298075E100C4712A /* FrontMostApplicationDetection.swift */; };
 		EABE71F62981B19600C4712A /* notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = EABE71F52981B19600C4712A /* notifications.swift */; };
 		EABE71F82981BA8500C4712A /* notificationIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = EABE71F72981BA8500C4712A /* notificationIcon.png */; };
+		EAE682DF29DDF89E004FBCD9 /* CryptoSwift in Frameworks */ = {isa = PBXBuildFile; productRef = EAE682DE29DDF89E004FBCD9 /* CryptoSwift */; };
 		EAF4C6C829DC921A0091AF4D /* Caesar.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAF4C6C729DC921A0091AF4D /* Caesar.swift */; };
 /* End PBXBuildFile section */
 
@@ -73,6 +74,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EAE682DF29DDF89E004FBCD9 /* CryptoSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -169,6 +171,9 @@
 			dependencies = (
 			);
 			name = ScreenTracker;
+			packageProductDependencies = (
+				EAE682DE29DDF89E004FBCD9 /* CryptoSwift */,
+			);
 			productName = ScreenTracker;
 			productReference = EA07825E2978EFE50091F87E /* ScreenTracker.app */;
 			productType = "com.apple.product-type.application";
@@ -241,6 +246,9 @@
 				Base,
 			);
 			mainGroup = EA0782552978EFE50091F87E;
+			packageReferences = (
+				EAE682DD29DDF89E004FBCD9 /* XCRemoteSwiftPackageReference "CryptoSwift" */,
+			);
 			productRefGroup = EA07825F2978EFE50091F87E /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -615,6 +623,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		EAE682DD29DDF89E004FBCD9 /* XCRemoteSwiftPackageReference "CryptoSwift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/krzyzanowskim/CryptoSwift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		EAE682DE29DDF89E004FBCD9 /* CryptoSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EAE682DD29DDF89E004FBCD9 /* XCRemoteSwiftPackageReference "CryptoSwift" */;
+			productName = CryptoSwift;
+		};
+/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCVersionGroup section */
 		EA0782652978EFE50091F87E /* ScreenTracker.xcdatamodeld */ = {

@@ -11,7 +11,7 @@ import Foundation
 
 import NotificationCenter
 import UserNotifications
-
+import CryptoSwift
 
 struct frontMostApplicationInformation {
     static var frontMostApplication = "empty"
@@ -46,6 +46,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private var encryptionShiftindex = 3
     private var decryptionShiftindex = 23
     
+    private let key = "2tC2H19lkVbQDfakxcrtNMQdd0FloLyw"
+    private let iv = "bbC2H19lkVbQDfak"
+    
     // user notification
     let un = UNUserNotificationCenter.current()
     
@@ -64,10 +67,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 //        print(en1)
 //        let de1 = Caesarhandler.encrypt(message: en1, shift: 23)
 //        print(de1)
-//        print(Int(UnicodeScalar("A").value))
-//        print(Int(UnicodeScalar("Z").value))
-//        print(Int(UnicodeScalar("a").value))
-//        print(Int(UnicodeScalar("z").value))
+        
+        
+        
+        let otp: String = "attAck on Titan / , . % 123 play"
+        let encryptedOtp: String = try! otp.aesEncrypt(key: key, iv: iv)
+        print(encryptedOtp)
+        let decryptedOtp : String = try! encryptedOtp.aesDecrypt(key: key, iv: iv)
+        print(decryptedOtp)
         
         // 2
         // statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
@@ -94,8 +101,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // get metadata for the initial frontmost application
         // let dataLog = returnTimeStamp() + "    " + frontMostApplicationInformation.frontMostApplication + "\n"
         var dataLog = returnTimeStamp() + ", " + commaCheck(str: frontMostApplicationInformation.frontMostApplication) + "\n"
-        dataLog = Caesarhandler.encrypt(message: dataLog, shift: encryptionShiftindex)
-        inforLogHandler.write(dataLog)
+        // dataLog = Caesarhandler.encrypt(message: dataLog, shift: encryptionShiftindex)
+        let encryptedDataLog: String = try! dataLog.aesEncrypt(key: key, iv: iv)
+        inforLogHandler.write(encryptedDataLog)
         
         let metadataHandlerObj = metadataHandlerClass()
         let resultArray = metadataHandlerObj.getMetadataForFrontMostApplication( appName: frontMostApplicationInformation.frontMostApplication ?? "invalid app name!")
@@ -103,8 +111,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 //        print(resultArray)
         // let metadata = frontMostApplicationInformation.frontMostApplicationFirstMetadata + "    " + frontMostApplicationInformation.frontMostApplciationSecondMetadata + "\n"
         var metadata = commaCheck(str: frontMostApplicationInformation.frontMostApplicationFirstMetadata) + ", " + commaCheck(str: frontMostApplicationInformation.frontMostApplciationSecondMetadata) + "\n"
-        metadata = Caesarhandler.encrypt(message: metadata, shift: encryptionShiftindex)
-        inforLogHandler.write(metadata)
+        // metadata = Caesarhandler.encrypt(message: metadata, shift: encryptionShiftindex)
+        let encryptedmetadata: String = try! metadata.aesEncrypt(key: key, iv: iv)
+        inforLogHandler.write(encryptedmetadata)
         
         // set notification center's delegate
         UNUserNotificationCenter.current().delegate = self
@@ -398,8 +407,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             // inforLogHandler.write(dataLog)
             // separate by comma
             var dataLog = returnTimeStamp() + ", " + commaCheck(str: frontMostApplicationInformation.frontMostApplication) + "\n"
-            dataLog = Caesarhandler.encrypt(message: dataLog, shift: encryptionShiftindex)
-            inforLogHandler.write(dataLog)
+            // dataLog = Caesarhandler.encrypt(message: dataLog, shift: encryptionShiftindex)
+            let encrypteddataLog: String = try! dataLog.aesEncrypt(key: key, iv: iv)
+            inforLogHandler.write(encrypteddataLog)
             
             // get metadata for the frontmost application
             let metadataHandlerObj = metadataHandlerClass()
@@ -410,12 +420,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 // let metadata = resultArray[0] + "    " + resultArray[1] + "\n"
                 var metadata = commaCheck(str: resultArray[0]) + ", " + commaCheck(str: resultArray[1]) + "\n"
                 metadata = Caesarhandler.encrypt(message: metadata, shift: encryptionShiftindex)
-                inforLogHandler.write(metadata)
+                let encryptedmetadata: String = try! metadata.aesEncrypt(key: key, iv: iv)
+                inforLogHandler.write(encryptedmetadata)
             } else {
                 // let metadata = frontMostApplicationInformation.frontMostApplicationFirstMetadata + "    " + frontMostApplicationInformation.frontMostApplciationSecondMetadata
                 var metadata = frontMostApplicationInformation.emptyMedata + ", " + frontMostApplicationInformation.emptyMedata + "\n"
-                metadata = Caesarhandler.encrypt(message: metadata, shift: encryptionShiftindex)
-                inforLogHandler.write(metadata)
+                // metadata = Caesarhandler.encrypt(message: metadata, shift: encryptionShiftindex)
+                let encryptedmetadata: String = try! metadata.aesEncrypt(key: key, iv: iv)
+                inforLogHandler.write(encryptedmetadata)
             }
             
             
@@ -426,20 +438,24 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         else{
             // timestamp + app name
             var dataLog = returnTimeStamp() + ", " + commaCheck(str: frontMostApplicationInformation.frontMostApplication) + "\n"
-            dataLog = Caesarhandler.encrypt(message: dataLog, shift: encryptionShiftindex)
+            // dataLog = Caesarhandler.encrypt(message: dataLog, shift: encryptionShiftindex)
+            let encrypteddataLog: String = try! dataLog.aesEncrypt(key: key, iv: iv)
             inforLogHandler.write(dataLog)
+            
             // get metadata for the frontmost application
             let metadataHandlerObj = metadataHandlerClass()
             let resultArray = metadataHandlerObj.getMetadataForFrontMostApplication( appName: CurrentFrontMostAppName ?? "invalid app name!")
             if (resultArray.count == 2){
                 var metadata = commaCheck(str: resultArray[0]) + ", " + commaCheck(str: resultArray[1]) + "\n"
-                metadata = Caesarhandler.encrypt(message: metadata, shift: encryptionShiftindex)
-                inforLogHandler.write(metadata)
+                // metadata = Caesarhandler.encrypt(message: metadata, shift: encryptionShiftindex)
+                let encryptedmetadata: String = try! metadata.aesEncrypt(key: key, iv: iv)
+                inforLogHandler.write(encryptedmetadata)
             } else {
                 // result array has wrong length, write default empty values
                 var metadata = frontMostApplicationInformation.emptyMedata + ", " + frontMostApplicationInformation.emptyMedata + "\n"
-                metadata = Caesarhandler.encrypt(message: metadata, shift: encryptionShiftindex)
-                inforLogHandler.write(metadata)
+                // metadata = Caesarhandler.encrypt(message: metadata, shift: encryptionShiftindex)
+                let encryptedmetadata: String = try! metadata.aesEncrypt(key: key, iv: iv)
+                inforLogHandler.write(encryptedmetadata)
             }
             
             
@@ -698,6 +714,47 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         return completionHandler([.list, .sound])
     }
+}
+
+extension String {
+
+    func aesEncrypt(key: String, iv: String) throws -> String {
+        let data = self.data(using: .utf8)!
+        let encrypted = try! AES(key: key, iv: iv, padding: .pkcs7).encrypt([UInt8](data))
+        let encryptedData = Data(encrypted)
+        return encryptedData.toHexString()
+    }
+
+    func aesDecrypt(key: String, iv: String) throws -> String {
+        let data = self.dataFromHexadecimalString()!
+        let decrypted = try! AES(key: key, iv: iv, padding:.pkcs7).decrypt([UInt8](data))
+        let decryptedData = Data(decrypted)
+        return String(bytes: decryptedData.bytes, encoding: .utf8) ?? "Could not decrypt"
+    }
+
+    func dataFromHexadecimalString() -> Data? {
+        var data = Data(capacity: count / 2)
+        let regex = try! NSRegularExpression(pattern: "[0-9a-f]{1,2}", options: .caseInsensitive)
+        regex.enumerateMatches(in: self, options: [], range: NSMakeRange(0, count)) { match, flags, stop in
+            let byteString = (self as NSString).substring(with: match!.range)
+            let num = UInt8(byteString, radix: 16)
+            data.append(num!)
+        }
+            return data
+    }
+
+}
+
+extension Data {
+
+    var bytes: Array<UInt8> {
+        return Array(self)
+    }
+
+    func toHexString() -> String {
+        return bytes.toHexString()
+    }
+
 }
 
 

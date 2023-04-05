@@ -9,6 +9,9 @@ import Foundation
 
 class Caesar {
     
+
+    
+    
     func encrypt(message: String, shift: Int) -> String {
 
         func shiftLetter(ucs: UnicodeScalar) -> UnicodeScalar {

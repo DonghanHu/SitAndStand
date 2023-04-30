@@ -104,6 +104,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // dataLog = Caesarhandler.encrypt(message: dataLog, shift: encryptionShiftindex)
         let encryptedDataLog: String = try! dataLog.aesEncrypt(key: key, iv: iv)
         inforLogHandler.write(encryptedDataLog)
+        inforLogHandler.write("\n")
         
         let metadataHandlerObj = metadataHandlerClass()
         let resultArray = metadataHandlerObj.getMetadataForFrontMostApplication( appName: frontMostApplicationInformation.frontMostApplication ?? "invalid app name!")
@@ -114,6 +115,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // metadata = Caesarhandler.encrypt(message: metadata, shift: encryptionShiftindex)
         let encryptedmetadata: String = try! metadata.aesEncrypt(key: key, iv: iv)
         inforLogHandler.write(encryptedmetadata)
+        inforLogHandler.write("\n")
         
         // set notification center's delegate
         UNUserNotificationCenter.current().delegate = self
@@ -410,6 +412,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             // dataLog = Caesarhandler.encrypt(message: dataLog, shift: encryptionShiftindex)
             let encrypteddataLog: String = try! dataLog.aesEncrypt(key: key, iv: iv)
             inforLogHandler.write(encrypteddataLog)
+            inforLogHandler.write("\n")
             
             // get metadata for the frontmost application
             let metadataHandlerObj = metadataHandlerClass()
@@ -422,12 +425,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 metadata = Caesarhandler.encrypt(message: metadata, shift: encryptionShiftindex)
                 let encryptedmetadata: String = try! metadata.aesEncrypt(key: key, iv: iv)
                 inforLogHandler.write(encryptedmetadata)
+                inforLogHandler.write("\n")
             } else {
                 // let metadata = frontMostApplicationInformation.frontMostApplicationFirstMetadata + "    " + frontMostApplicationInformation.frontMostApplciationSecondMetadata
                 var metadata = frontMostApplicationInformation.emptyMedata + ", " + frontMostApplicationInformation.emptyMedata + "\n"
                 // metadata = Caesarhandler.encrypt(message: metadata, shift: encryptionShiftindex)
                 let encryptedmetadata: String = try! metadata.aesEncrypt(key: key, iv: iv)
                 inforLogHandler.write(encryptedmetadata)
+                inforLogHandler.write("\n")
             }
             
             
@@ -441,6 +446,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             // dataLog = Caesarhandler.encrypt(message: dataLog, shift: encryptionShiftindex)
             let encrypteddataLog: String = try! dataLog.aesEncrypt(key: key, iv: iv)
             inforLogHandler.write(dataLog)
+            inforLogHandler.write("\n")
             
             // get metadata for the frontmost application
             let metadataHandlerObj = metadataHandlerClass()
@@ -450,12 +456,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 // metadata = Caesarhandler.encrypt(message: metadata, shift: encryptionShiftindex)
                 let encryptedmetadata: String = try! metadata.aesEncrypt(key: key, iv: iv)
                 inforLogHandler.write(encryptedmetadata)
+                inforLogHandler.write("\n")
             } else {
                 // result array has wrong length, write default empty values
                 var metadata = frontMostApplicationInformation.emptyMedata + ", " + frontMostApplicationInformation.emptyMedata + "\n"
                 // metadata = Caesarhandler.encrypt(message: metadata, shift: encryptionShiftindex)
                 let encryptedmetadata: String = try! metadata.aesEncrypt(key: key, iv: iv)
                 inforLogHandler.write(encryptedmetadata)
+                inforLogHandler.write("\n")
             }
             
             

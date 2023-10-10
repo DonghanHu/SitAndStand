@@ -189,13 +189,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 
                 // set notification for every 30 minutes
                 self.repeatedNotifcationTimer = Timer.scheduledTimer(timeInterval: timeIntervaleForNotification, target: self, selector: #selector(notificationFunction), userInfo: nil, repeats: true)
-                
+                print("notification timer status: ", self.repeatedNotifcationTimer.isValid)
             } else{
                 firstButton.title = "Start"
                 // stop two timers
                 detectingFrontMostAppTimer.invalidate()
                 repeatedNotifcationTimer.invalidate()
-                
+                print("notification timer status: ", self.repeatedNotifcationTimer.isValid)
             }
         }
 
@@ -203,8 +203,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     // set periodically notification function
+    
+    // https://stackoverflow.com/questions/69782010/is-it-possible-to-set-default-alert-style-for-macos-unnotification
+    // notificaiton styles
     @objc func notificationFunction() {
-        
+        print("this is notification function")
         self.un.removeAllDeliveredNotifications()
         self.un.removeAllPendingNotificationRequests()
         
@@ -212,8 +215,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             if settings.authorizationStatus == .authorized {
                 let content = UNMutableNotificationContent()
                 
-                content.title = "Time to change."
-                content.body = "How willing are you  to use the stand mode at this moment?                               ."
+                content.title = "Sit/stand desk survey"
+                // content.body = "How willing are you  to use the stand mode at this moment?                                       ."
+                content.body = "How willing are you  to use the stand mode at this moment?"
                 content.sound = UNNotificationSound.default
                 content.categoryIdentifier = "actions"
                 
@@ -242,8 +246,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 
                 // time interval should be at least 60 if repeated
                 // set 30 minutes
-                // let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1800, repeats: true)
                 // let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 60, repeats: true)
+                // 1800 is set in the timer, not here
                 let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5, repeats: false)
                 let request = UNNotificationRequest(identifier: id, content: content, trigger: trigger)
                 
@@ -301,7 +305,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             if settings.authorizationStatus == .authorized {
                 let content = UNMutableNotificationContent()
                 
-                content.title = "Time to change."
+                content.title = "Sit/stand desk survey"
                 // content.subtitle = "this is subtitle"
                 content.body = "How willing are you  to use the stand mode at this moment?"
                 content.sound = UNNotificationSound.default
@@ -408,7 +412,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             // let dataLog = returnTimeStamp() + "    " + frontMostApplicationInformation.frontMostApplication + "\n"
             // inforLogHandler.write(dataLog)
             // separate by comma
-            var dataLog = returnTimeStamp() + ", " + commaCheck(str: frontMostApplicationInformation.frontMostApplication) + "\n"
+            let dataLog = returnTimeStamp() + ", " + commaCheck(str: frontMostApplicationInformation.frontMostApplication) + "\n"
             // dataLog = Caesarhandler.encrypt(message: dataLog, shift: encryptionShiftindex)
             let encrypteddataLog: String = try! dataLog.aesEncrypt(key: key, iv: iv)
             inforLogHandler.write(encrypteddataLog)

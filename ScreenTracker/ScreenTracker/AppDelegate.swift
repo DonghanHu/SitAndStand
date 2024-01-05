@@ -54,21 +54,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     // initate log file for saving information
     var inforLogHandler = InforLog()
-    // inforLogHandler.write("hello")
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         // Insert code here to initialize your application
         
         let Caesarhandler = Caesar()
-        
-//        let string = "attAck on Titan / , . % 123 play"
-//        print(string)
-//        let en1 = Caesarhandler.encrypt(message: string, shift: 3)
-//        print(en1)
-//        let de1 = Caesarhandler.encrypt(message: en1, shift: 23)
-//        print(de1)
-        
-        
         
         let otp: String = "attAck on Titan / , . % 123 play"
         let encryptedOtp: String = try! otp.aesEncrypt(key: key, iv: iv)
@@ -81,7 +71,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         // 3
         if let button = statusItem.button {
-            button.image = NSImage(named: "icons8-desk-24 (1)")
+            button.image = NSImage(named: "icons8-table-30")
             // button.image = NSImage(named: NSImage.quickLookTemplateName)
         }
         
@@ -101,18 +91,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // get metadata for the initial frontmost application
         // let dataLog = returnTimeStamp() + "    " + frontMostApplicationInformation.frontMostApplication + "\n"
         var dataLog = returnTimeStamp() + ", " + commaCheck(str: frontMostApplicationInformation.frontMostApplication) + "\n"
-        // dataLog = Caesarhandler.encrypt(message: dataLog, shift: encryptionShiftindex)
         let encryptedDataLog: String = try! dataLog.aesEncrypt(key: key, iv: iv)
         inforLogHandler.write(encryptedDataLog)
         inforLogHandler.write("\n")
         
         let metadataHandlerObj = metadataHandlerClass()
         let resultArray = metadataHandlerObj.getMetadataForFrontMostApplication( appName: frontMostApplicationInformation.frontMostApplication ?? "invalid app name!")
-//        print("result Array: \n")
-//        print(resultArray)
         // let metadata = frontMostApplicationInformation.frontMostApplicationFirstMetadata + "    " + frontMostApplicationInformation.frontMostApplciationSecondMetadata + "\n"
         var metadata = commaCheck(str: frontMostApplicationInformation.frontMostApplicationFirstMetadata) + ", " + commaCheck(str: frontMostApplicationInformation.frontMostApplciationSecondMetadata) + "\n"
-        // metadata = Caesarhandler.encrypt(message: metadata, shift: encryptionShiftindex)
         let encryptedmetadata: String = try! metadata.aesEncrypt(key: key, iv: iv)
         inforLogHandler.write(encryptedmetadata)
         inforLogHandler.write("\n")
@@ -139,7 +125,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         UNUserNotificationCenter.current().getPendingNotificationRequests { (notificationRequests) in
            var identifiers: [String] = []
            for notification:UNNotificationRequest in notificationRequests {
-               print("one of them")
                print(notification)
                print(notification.identifier)
 //               if notification.identifier == "identifierCancel" {
@@ -183,6 +168,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             // start recording
             if (firstButton.title == "Start"){
                 // change button title
+                statusItem.button?.image = NSImage(named: "icons8-record-48")
                 firstButton.title = "Stop"
                 // start to monitor front-most application
                 self.detectingFrontMostAppTimer = Timer.scheduledTimer(timeInterval: timeIntervalForDetecing, target: self, selector: #selector(printFrontMostApplication), userInfo: nil, repeats: true)
@@ -193,6 +179,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             } else{
                 firstButton.title = "Start"
                 // stop two timers
+                statusItem.button?.image = NSImage(named: "icons8-table-30")
                 detectingFrontMostAppTimer.invalidate()
                 repeatedNotifcationTimer.invalidate()
                 print("notification timer status: ", self.repeatedNotifcationTimer.isValid)
@@ -271,12 +258,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         if (firstButton.title == "Start"){
             // change button title
+            statusItem.button?.image = NSImage(named: "icons8-record-48")
             firstButton.title = "Stop"
             // start to monitor front-most application
             self.detectingFrontMostAppTimer = Timer.scheduledTimer(timeInterval: timeIntervalForDetecing, target: self, selector: #selector(printFrontMostApplication), userInfo: nil, repeats: true)
             
         } else{
             firstButton.title = "Start"
+            statusItem.button?.image = NSImage(named: "icons8-table-30")
             detectingFrontMostAppTimer.invalidate()
         }
     }
@@ -410,10 +399,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             frontMostApplicationInformation.frontMostApplication = CurrentFrontMostAppName!
             // save new front most application
             // let dataLog = returnTimeStamp() + "    " + frontMostApplicationInformation.frontMostApplication + "\n"
-            // inforLogHandler.write(dataLog)
             // separate by comma
             let dataLog = returnTimeStamp() + ", " + commaCheck(str: frontMostApplicationInformation.frontMostApplication) + "\n"
-            // dataLog = Caesarhandler.encrypt(message: dataLog, shift: encryptionShiftindex)
             let encrypteddataLog: String = try! dataLog.aesEncrypt(key: key, iv: iv)
             inforLogHandler.write(encrypteddataLog)
             inforLogHandler.write("\n")
@@ -426,7 +413,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             if (resultArray.count == 2){
                 // let metadata = resultArray[0] + "    " + resultArray[1] + "\n"
                 var metadata = commaCheck(str: resultArray[0]) + ", " + commaCheck(str: resultArray[1]) + "\n"
-                metadata = Caesarhandler.encrypt(message: metadata, shift: encryptionShiftindex)
+                // metadata = Caesarhandler.encrypt(message: metadata, shift: encryptionShiftindex)
                 let encryptedmetadata: String = try! metadata.aesEncrypt(key: key, iv: iv)
                 inforLogHandler.write(encryptedmetadata)
                 inforLogHandler.write("\n")
@@ -449,7 +436,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             var dataLog = returnTimeStamp() + ", " + commaCheck(str: frontMostApplicationInformation.frontMostApplication) + "\n"
             // dataLog = Caesarhandler.encrypt(message: dataLog, shift: encryptionShiftindex)
             let encrypteddataLog: String = try! dataLog.aesEncrypt(key: key, iv: iv)
-            inforLogHandler.write(dataLog)
+            inforLogHandler.write(encrypteddataLog)
             inforLogHandler.write("\n")
             
             // get metadata for the frontmost application
@@ -471,27 +458,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             }
             
             
-            
-//            let currentName = frontMostApplicationInformation.frontMostApplication
-//            let metadataHandlerObj = metadataHandlerClass()
-//            let resultArray = metadataHandlerObj.getMetadataForFrontMostApplication( appName: currentName ?? "invalid app name!")
-//            print("current result array length is: ")
-//            print(resultArray.count)
-//            if( resultArray.count == 2 && resultArray[0] ==  frontMostApplicationInformation.frontMostApplicationFirstMetadata && resultArray[1] == frontMostApplicationInformation.frontMostApplciationSecondMetadata){
-//                // no need to change original values
-//                // update new timestamp
-//                let dataLog = returnTimeStamp() + ", " + commaCheck(str: frontMostApplicationInformation.frontMostApplication) + "\n"
-//                inforLogHandler.write(dataLog)
-//
-//            } else if (resultArray.count == 2){
-//                // write down new data into the log file
-//                let dataLog = returnTimeStamp() + ", " + commaCheck(str: frontMostApplicationInformation.frontMostApplication) + "\n"
-//                inforLogHandler.write(dataLog)
-//                let metadata = commaCheck(str: resultArray[0]) + ", " + commaCheck(str: resultArray[1]) + "\n"
-//                inforLogHandler.write(metadata)
-//            } else{
-//                // do nothing
-//            }
             
         }
         // end of else block
@@ -698,6 +664,9 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         if response.notification.request.content.categoryIdentifier == "actions" {
+            
+            // print(response.notification.request.content.userInfo)
+            
             switch response.actionIdentifier{
             case "action1":
                 actionHandler.sharedactionHandler.act1()
@@ -717,6 +686,12 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             case "action6":
                 actionHandler.sharedactionHandler.act6()
             default:
+                print("this is default option. ")
+                let url = URL(string: "https://www.google.com")!
+                if NSWorkspace.shared.open(url) {
+                    print("default browser was successfully opened")
+
+                }
                 actionHandler.sharedactionHandler.defaultFunc()
                 break
             }

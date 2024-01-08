@@ -687,7 +687,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                 actionHandler.sharedactionHandler.act6()
             default:
                 print("this is default option. ")
-                let url = URL(string: "https://www.google.com")!
+                let url = URL(string: "https://forms.gle/GTN3752S1fGhLX6B8")!
                 if NSWorkspace.shared.open(url) {
                     print("default browser was successfully opened")
 
